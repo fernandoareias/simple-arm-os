@@ -6,15 +6,17 @@
 .section .multiboot
     .quad MAGIC          // Magic number (64 bits)
     .quad FLAGS          // Flags (64 bits)
-    .quad CHECKSUM       // Checksum (64 bits)
+    .quad CHECKpSUM       // Checksum (64 bits)
 
 .section .text
 .extern kernelMain      // Declara kernelMain como externa (definida em outro arquivo)
+.extern callConstructors
 .global loader          // Define o símbolo 'loader' como global
 
 loader:
     // Configura o ponteiro de pilha (SP) para apontar para o topo da pilha
     ldr x29, =kernel_stack_end  // Carrega o endereço do topo da pilha em x29 (Frame Pointer)
+    bl callConstructors
     mov sp, x29                 // Move o valor de x29 para o registrador SP (Stack Pointer)
 
     bl kernelMain               // Branch with Link: chama a função kernelMain
